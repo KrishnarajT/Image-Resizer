@@ -1,0 +1,18 @@
+{
+  "name": "imageresizer",
+  "productName": "Image Resizer",
+  "version": "1.0.0",
+  "description": "an app to resize images",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "KrishnarajT",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^25.2.0",
+    "resize-img": "^2.0.0",
+    "toastify-js": "^1.12.0"
+  }
+}

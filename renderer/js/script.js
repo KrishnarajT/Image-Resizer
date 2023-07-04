@@ -32,10 +32,16 @@ function sendImage(e) {
 		height,
 		imagePath,
 		output,
-  });
-  
+	});
+
+	// catch the response from the main process
+	ipcRenderer.on("image:done", () => {
+		console.log("image:done received");
+		// alert("Image resized successfully");
+		toast.success("Image resized successfully");
+	});
+
 	console.log("image sent");
-	toast.success("Image sent");
 }
 
 function loadImage(e) {

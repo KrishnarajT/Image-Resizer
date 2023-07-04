@@ -6,12 +6,15 @@ const { ipcMain } = require("electron");
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "development";
 const os = require("os");
-const { dialog } = require("electron");
+const { dialog, shell } = require("electron");
 const fs = require("fs");
+const sharp = require("sharp");
+
+let mainWindow;
 
 // create the main window
 function createWindow() {
-	const mainWindow = new BrowserWindow({
+		mainWindow = new BrowserWindow({
 		width: 900,
 		height: 700,
 		title: "Image Resizer",
@@ -119,15 +122,13 @@ ipcMain.on("image:resize", (e, options) => {
 
 // resize the image
 async function resizeImage(options) {
-	const sharp = require("sharp");
-	const fs = require("fs");
 	const { width, height, imagePath, output } = options;
 
 	const filename = path.basename(imagePath);
 	const ext = path.extname(filename);
 	const name = path.basename(filename, ext);
-	console.log(filename, ext, name)
-	
+	console.log(filename, ext, name);
+
 	// create destination folder if it doesnt exist
 	if (!fs.existsSync(output)) {
 		fs.mkdirSync(output);
@@ -144,6 +145,17 @@ async function resizeImage(options) {
 				title: "Success",
 				message: "Image resized successfully",
 			});
+
+			// send status to renderer
+			mainWindow.webContents.send("image:done", {
+				status: "success",
+				message: "Image resized successfully",
+			});
+
+
+			// open the output folder
+			shell.openPath(output);
+
 		})
 		.catch((err) => {
 			console.log(err);

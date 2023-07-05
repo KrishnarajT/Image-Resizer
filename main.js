@@ -4,17 +4,17 @@ const { app, BrowserWindow } = require("electron");
 const Menu = require("electron").Menu;
 const { ipcMain } = require("electron");
 const isMac = process.platform === "darwin";
-const isDev = process.env.NODE_ENV !== "development";
+const isDev = false; //process.env.NODE_ENV !== "production";
 const os = require("os");
 const { dialog, shell } = require("electron");
 const fs = require("fs");
-const sharp = require("sharp");
+const resizeImg = require("resize-img");
 
 let mainWindow;
 
 // create the main window
 function createWindow() {
-		mainWindow = new BrowserWindow({
+	mainWindow = new BrowserWindow({
 		width: 900,
 		height: 700,
 		title: "Image Resizer",
@@ -133,36 +133,20 @@ async function resizeImage(options) {
 	if (!fs.existsSync(output)) {
 		fs.mkdirSync(output);
 	}
+	// Resize image
+	const newPath = await resizeImg(fs.readFileSync(imagePath), {
+		width: +width,
+		height: +height,
+	});
 
-	// resize the image
-	sharp(imagePath)
-		.resize(parseInt(width), parseInt(height))
-		.toFile(output + "/" + name + "-resized" + ext)
-		.then((data) => {
-			console.log(data);
-			// alert("Image resized successfully");
-			dialog.showMessageBoxSync({
-				title: "Success",
-				message: "Image resized successfully",
-			});
+	// Write the file to the destination folder
+	fs.writeFileSync(path.join(output, filename), newPath);
 
-			// send status to renderer
-			mainWindow.webContents.send("image:done", {
-				status: "success",
-				message: "Image resized successfully",
-			});
+	mainWindow.webContents.send("image:done", {
+		filename,
+		output,
+	});
 
-
-			// open the output folder
-			shell.openPath(output);
-
-		})
-		.catch((err) => {
-			console.log(err);
-			// alert("Error resizing image");
-			dialog.showMessageBoxSync({
-				title: "Error",
-				message: "Error resizing image",
-			});
-		});
+	// open the output folder
+	shell.openPath(output);
 }

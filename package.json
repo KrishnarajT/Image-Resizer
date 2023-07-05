@@ -1,19 +1,64 @@
 {
   "name": "imageresizer",
+  "bugs": {
+    "email": "kpt.krishnaraj@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KrishnarajT/Image-Resizer"
+  },
   "productName": "Image Resizer",
   "version": "1.0.0",
   "description": "an app to resize images",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "build --dir",
+    "dist": "build",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder"
   },
   "author": "KrishnarajT",
   "license": "MIT",
   "dependencies": {
-    "electron": "^25.2.0",
     "resize-img": "^2.0.0",
-    "sharp": "^0.32.1",
     "toastify-js": "^1.12.0"
+  },
+  "devDependencies": {
+    "electron": "^25.2.0",
+    "electron-builder": "^24.4.0"
+  },
+  "build": {
+    "icon": "assets/icons/Icon_512x512.png",
+    "appId": "ImageResizer",
+    "dmg": {
+      "icon": "assets/icons/mac/icon.icns",
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "maintainer": "KrishnarajT",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icons/linux/icon.png",
+      "category": "Graphics"
+    },
+    "win": {
+      "target": "squirrel",
+      "icon": "assets/icons/win/icon.ico"
+    }
   }
 }
